@@ -1,0 +1,22 @@
+From: Maximilian Räthel <mraethel@outlook.com>
+Date: Sun, 21 Nov 2026 11:00:00 +0100
+Subject: [PATCH] mtd/nand/raw/nand_macronix.c: chip is already selected by caller of init
+
+Read the FIXME in function nand_scan_tail of nand_base.c on why this will
+not be upstreamed.
+
+Signed-off-by: Maximilian Räthel <mraethel@outlook.com>
+---
+--- a/drivers/mtd/nand/raw/nand_macronix.c
++++ b/drivers/mtd/nand/raw/nand_macronix.c
+@@ -236,10 +236,8 @@ static void macronix_nand_block_protecti
+ 		   ONFI_FEATURE_ADDR_MXIC_PROTECTION, 1);
+ 
+ 	feature[0] = MXIC_BLOCK_PROTECTION_ALL_UNLOCK;
+-	nand_select_target(chip, 0);
+ 	ret = nand_get_features(chip, ONFI_FEATURE_ADDR_MXIC_PROTECTION,
+ 				feature);
+-	nand_deselect_target(chip);
+ 	if (ret || feature[0] != MXIC_BLOCK_PROTECTION_ALL_LOCK) {
+ 		if (ret)
+ 			pr_err("Block protection check failed\n");

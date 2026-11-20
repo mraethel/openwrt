@@ -24,6 +24,7 @@ lantiq_setup_interfaces()
 	bt,homehub-v5a|\
 	lantiq,easy80920-nand|\
 	lantiq,easy80920-nor|\
+	telekom,spw724vb|\
 	zyxel,p-2812hnu-f1|\
 	zyxel,p-2812hnu-f3)
 		ucidef_set_interfaces_lan_wan "lan1 lan2 lan3 lan4" "wan"
@@ -131,6 +132,10 @@ lantiq_setup_macs()
 		;;
 	buffalo,wbmr-300hpd)
 		wan_mac="$(mtd_get_mac_ascii u-boot-env ethaddr)"
+		;;
+	telekom,spw724vb)
+		lan_mac="$(mtd_get_mac_ascii manuf mac_address_base)"
+		wan_mac="$(macaddr_add $lan_mac 3)"
 		;;
 	tplink,vr200|\
 	tplink,vr200v)

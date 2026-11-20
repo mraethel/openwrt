@@ -359,6 +359,21 @@ define Device/lantiq_easy80920-nor
 endef
 TARGET_DEVICES += lantiq_easy80920-nor
 
+define Device/telekom_spw724vb
+  $(Device/dsa-migration)
+  $(Device/NAND)
+  DEVICE_VENDOR := Telekom
+  DEVICE_MODEL := Speedport W724V Typ B
+  BOARD_NAME := VRV9510KWAC23
+  DEVICE_PACKAGES :=  kmod-b43 wpad-basic-mbedtls broadcom-43222-sprom \
+	broadcom-4360-sprom kmod-usb-dwc2 kmod-ltq-tapi kmod-ltq-vmmc \
+	xrx200-rev1.1-phy11g-firmware xrx200-rev1.2-phy11g-firmware
+	IMAGE_SIZE := 49152k
+  KERNEL_SIZE := 7168k
+  SUPPORTED_DEVICES += telekom_spw724vb
+endef
+TARGET_DEVICES += telekom_spw724vb
+
 define Device/zyxel_p-2812hnu-f1
   $(Device/NAND)
   DEVICE_COMPAT_VERSION := 2.0
