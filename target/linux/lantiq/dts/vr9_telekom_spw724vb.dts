@@ -1,0 +1,186 @@
+// SPDX-License-Identifier: GPL-2.0-or-later
+
+#include "vr9_arcadyan_vrv9510kwac23.dts"
+
+/ {
+	compatible = "telekom,spw724vb", "lantiq,xway", "lantiq,vr9";
+	model = "Telekom Speedport W724V Typ B";
+
+	aliases {
+		led-boot = &please_wait;
+		led-failsafe = &power_red;
+		led-running = &power;
+		led-upgrade = &service;
+		led-internet = &xdsl_link;
+		led-wifi = &wlan;
+	};
+};
+
+&{/leds} {
+	/delete-node/ power;
+	/delete-node/ internet_green;
+	/delete-node/ internet_red;
+	/delete-node/ phone;
+	/delete-node/ lan;
+	/delete-node/ wireless_blue;
+	/delete-node/ wireless_green;
+	/delete-node/ upgrade;
+};
+
+&{/leds} {
+	xdsl_link: xdsl_link {
+		gpios = <&gpio 26 GPIO_ACTIVE_LOW>;
+		function = LED_FUNCTION_WAN;
+		color = <LED_COLOR_ID_WHITE>;
+	};
+	online {
+		gpios = <&gpio 33 GPIO_ACTIVE_LOW>;
+		color = <LED_COLOR_ID_WHITE>;
+	};
+	power_red: power_red {
+		gpios = <&gpio 37 GPIO_ACTIVE_LOW>;
+		function = LED_FUNCTION_FAULT;
+		color = <LED_COLOR_ID_RED>;
+	};
+	power: power {
+		gpios = <&gpio 38 GPIO_ACTIVE_LOW>;
+		function = LED_FUNCTION_POWER;
+		color = <LED_COLOR_ID_WHITE>;
+	};
+	login {
+		gpios = <&gpio 40 GPIO_ACTIVE_LOW>;
+		function = LED_FUNCTION_WPS;
+		color = <LED_COLOR_ID_WHITE>;
+	};
+	DECT_search {
+		gpios = <&gpio 41 GPIO_ACTIVE_LOW>;
+		color = <LED_COLOR_ID_WHITE>;
+	};
+	phone {
+		gpios = <&gpio 44 GPIO_ACTIVE_LOW>;
+		color = <LED_COLOR_ID_WHITE>;
+	};
+	service: service {
+		gpios = <&gpio 45 GPIO_ACTIVE_LOW>;
+		color = <LED_COLOR_ID_WHITE>;
+	};
+	please_wait: please_wait {
+		gpios = <&gpio 46 GPIO_ACTIVE_LOW>;
+		function = LED_FUNCTION_BOOT;
+		color = <LED_COLOR_ID_WHITE>;
+	};
+	wlan: wlan {
+		gpios = <&gpio 47 GPIO_ACTIVE_LOW>;
+		function = LED_FUNCTION_WLAN;
+		color = <LED_COLOR_ID_WHITE>;
+	};
+};
+
+&{/bcm43222-sprom} {
+	nvmem-cells = <&macaddr_manuf 1>;
+};
+
+&{/bcm4360-sprom} {
+	nvmem-cells = <&macaddr_manuf 1>;
+};
+
+&{localbus/flash@0/partitions} {
+	/delete-node/ partition@0;
+	/delete-node/ partition@80000;
+	/delete-node/ partition@a0000;
+	/delete-node/ partition@540000;
+	/delete-node/ partition@7ea0000;
+};
+
+&{localbus/flash@0} {
+	nand-on-flash-bbt;
+
+	partitions {
+		partition@0 {
+			label = "uboot";
+			reg = <0x0 0x80000>;
+			read-only;
+		};
+		partition@100000 {
+			label = "kernel";
+			reg = <0x100000 0x700000>;
+		};
+		partition@800000 {
+			label = "ubi";
+			compatible = "linux,ubi";
+			reg = <0x800000 0x3000000>;
+		};
+		partition@3800000 {
+			label = "kernel2";
+			reg = <0x3800000 0x700000>;
+			read-only;
+		};
+		partition@3f00000 {
+			label = "rootfs2";
+			reg = <0x3f00000 0x3000000>;
+			read-only;
+		};
+		partition@6f00000 {
+			label = "ubootcfg";
+			reg = <0x6f00000 0x20000>;
+
+			nvmem-layout {
+				compatible = "u-boot,env-redundant-bool";
+
+				macaddr_ubootcfg: ethaddr {
+					#nvmem-cell-cells = <1>;
+				};
+			};
+		};
+		partition@7000000 {
+			label = "bakubootcfg";
+			reg = <0x7000000 0x20000>;
+			read-only;
+		};
+		partition@7100000 {
+			label = "pricfg";
+			reg = <0x7100000 0x80000>;
+			read-only;
+		};
+		partition@7200000 {
+			label = "seccfg";
+			reg = <0x7200000 0x80000>;
+			read-only;
+		};
+		partition@7300000 {
+			label = "pri_rw_fs";
+			compatible = "linux,ubi";
+			reg = <0x7300000 0xa00000>;
+		};
+		partition@7d00000 {
+			label = "manuf";
+			reg = <0x7d00000 0x20000>;
+			read-only;
+
+			nvmem-layout {
+				compatible = "u-boot,env-redundant-bool";
+
+				macaddr_manuf: mac_address_base {
+					#nvmem-cell-cells = <1>;
+				};
+			};
+		};
+		/* partition@7e00000 { */
+		/*	label = "BBT"; */
+		/*	reg = <0x7e00000 0x200000>; */
+		/*	read-only; */
+		/* }; */
+	};
+};
+
+&eth0 {
+	nvmem-cells = <&macaddr_manuf 0>;
+};
+
+&ppe {
+	nvmem-cells = <&macaddr_manuf 0>;
+};
+
+&{gswip_ports/port@4} {
+	nvmem-cells = <&macaddr_manuf 0>;
+};

@@ -66,6 +66,10 @@ buffalo,wbmr-300hpd)
 	ucidef_set_led_switch "lan3" "LAN3" "green:lan3" "switch0" "0x20"
 	ucidef_set_led_default "router" "router" "green:router" "1"
 	;;
+telekom,spw724vb)
+	ucidef_set_led_netdev "lan" "lan" "white:lan" "eth0"
+	ucidef_set_led_wlan "wifi" "wifi" "white:wlan" "phy1radio"
+	;;
 esac
 
 board_config_flush
